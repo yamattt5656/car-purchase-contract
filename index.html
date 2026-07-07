@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>自動車買取契約書 作成ツール</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="toolbar no-print">
+  <div class="toolbar-title">自動車買取契約書 作成ツール</div>
+  <div class="toolbar-actions">
+    <button id="btn-print" class="btn btn-primary">印刷 / PDF保存</button>
+    <button id="btn-clear" class="btn">入力内容をクリア</button>
+  </div>
+</div>
+
+<div class="app">
+
+  <!-- ============ 入力フォーム（印刷されない） ============ -->
+  <aside class="editor no-print">
+
+    <fieldset>
+      <legend>契約基本情報</legend>
+      <label>契約日
+        <input type="date" data-bind="contractDate">
+      </label>
+      <label>契約書番号（任意）
+        <input type="text" data-bind="contractNo" placeholder="例）2026-0001">
+      </label>
+    </fieldset>
+
+    <fieldset>
+      <legend>売主（お客様）情報</legend>
+      <label>氏名・名称
+        <input type="text" data-bind="sellerName" placeholder="山田 太郎">
+      </label>
+      <label>住所
+        <input type="text" data-bind="sellerAddress" placeholder="東京都〇〇区〇〇1-2-3">
+      </label>
+      <label>電話番号
+        <input type="text" data-bind="sellerPhone" placeholder="090-0000-0000">
+      </label>
+      <label>生年月日（法人の場合は法人番号）
+        <input type="text" data-bind="sellerBirth" placeholder="1990年1月1日 生">
+      </label>
+    </fieldset>
+
+    <fieldset>
+      <legend>契約車両情報</legend>
+      <button type="button" id="btn-qr-scan" class="btn btn-qr">📷 車検証QRコード読取</button>
+      <p class="qr-fill-note">車検証の二次元コード２・３にカメラをかざすと、登録番号・車台番号・型式・初度登録年月・車検有効期限を自動入力します。</p>
+      <label>車名・メーカー
+        <input type="text" data-bind="carName" placeholder="トヨタ プリウス">
+      </label>
+      <label>型式
+        <input type="text" data-bind="carModel" placeholder="ZVW30">
+      </label>
+      <label>登録番号（ナンバー）
+        <input type="text" data-bind="carPlate" placeholder="品川 300 あ 12-34">
+      </label>
+      <label>車台番号
+        <input type="text" data-bind="carChassis" placeholder="ZVW30-1234567">
+      </label>
+      <label>初度登録年月
+        <input type="text" data-bind="carFirstReg" placeholder="令和3年5月">
+      </label>
+      <label>走行距離
+        <input type="text" data-bind="carMileage" placeholder="45,000km">
+      </label>
+      <label>車体色
+        <input type="text" data-bind="carColor" placeholder="パールホワイト">
+      </label>
+      <label>車検有効期限
+        <input type="date" data-bind="carInspection">
+      </label>
+    </fieldset>
+
+    <fieldset>
+      <legend>売買契約金額・支払い</legend>
+      <label>売買契約金額（円）
+        <input type="number" data-bind="price" placeholder="500000">
+      </label>
+      <label>支払方法
+        <select data-bind="paymentMethod">
+          <option value="">選択してください</option>
+          <option value="銀行振込">銀行振込</option>
+          <option value="現金">現金</option>
+          <option value="その他">その他</option>
+        </select>
+      </label>
+      <label>支払期限
+        <input type="date" data-bind="paymentDeadline">
+      </label>
+    </fieldset>
+
+    <fieldset>
+      <legend>引渡し</legend>
+      <label>車両引渡期限
+        <input type="date" data-bind="deliveryDeadline">
+      </label>
+      <label>書類引渡期限
+        <input type="date" data-bind="docDeadline">
+      </label>
+      <label>引渡場所
+        <input type="text" data-bind="deliveryPlace" placeholder="買主営業所 または 売主住所">
+      </label>
+    </fieldset>
+
+    <fieldset>
+      <legend>残債務・未納金等</legend>
+      <label class="label-inline">ローン残債
+        <span class="radio-group">
+          <label><input type="radio" name="loanStatus" value="無" checked> 無</label>
+          <label><input type="radio" name="loanStatus" value="有"> 有</label>
+        </span>
+      </label>
+      <label>残債金額（円・任意）
+        <input type="number" data-bind="loanAmount" placeholder="0">
+      </label>
+      <label>信販会社名（任意）
+        <input type="text" data-bind="loanCompany" placeholder="〇〇クレジット株式会社">
+      </label>
+      <label class="label-inline">未納金等（自動車税・放置違反金等）
+        <span class="radio-group">
+          <label><input type="radio" name="unpaidStatus" value="無" checked> 無</label>
+          <label><input type="radio" name="unpaidStatus" value="有"> 有</label>
+        </span>
+      </label>
+      <label>未納金等の金額（円・任意）
+        <input type="number" data-bind="unpaidAmount" placeholder="0">
+      </label>
+    </fieldset>
+
+    <fieldset>
+      <legend>特記事項</legend>
+      <label>特記事項（任意）
+        <textarea data-bind="remarks" rows="3" placeholder="例）修復歴の有無、付属品の有無など"></textarea>
+      </label>
+    </fieldset>
+
+  </aside>
+
+  <!-- ============ プレビュー／印刷用 ============ -->
+  <main class="preview">
+
+    <!-- ---------- 表面 ---------- -->
+    <section class="sheet" id="sheet-front">
+      <h1 class="sheet-title">自動車買取契約書</h1>
+      <p class="sheet-sub">
+        契約書番号：<span data-out="contractNo">－</span>　／　契約日：<span data-out="contractDate">－</span>
+      </p>
+
+      <p class="lead-text">
+        売主（以下「売主」という。）は、下記記載の契約車両を、下記条件にて買主（以下「買主」という。）に売り渡すものとし、
+        売主及び買主は本契約書裏面記載の約款を承認のうえ、本契約を締結する。
+      </p>
+
+      <div class="col-row">
+        <table class="info-table col-half">
+          <tr><th colspan="2">売主（お客様）</th></tr>
+          <tr><th>氏名・名称</th><td data-out="sellerName">－</td></tr>
+          <tr><th>住所</th><td data-out="sellerAddress">－</td></tr>
+          <tr><th>電話番号</th><td data-out="sellerPhone">－</td></tr>
+          <tr><th>生年月日／法人番号</th><td data-out="sellerBirth">－</td></tr>
+        </table>
+        <table class="info-table col-half">
+          <tr><th colspan="2">買主（自社）</th></tr>
+          <tr><th>会社名</th><td>有限会社　松下モータース</td></tr>
+          <tr><th>代表者</th><td>代表取締役　松下　佳正</td></tr>
+          <tr><th>住所</th><td>〒437-1415　静岡県掛川市菊浜59-1</td></tr>
+          <tr><th>TEL／FAX</th><td>TEL 0537-72-2583（代表）／FAX 0537-72-5067</td></tr>
+        </table>
+      </div>
+
+      <div class="col-row">
+        <table class="info-table col-half">
+          <tr><th colspan="2">契約車両</th></tr>
+          <tr><th>車名・メーカー</th><td data-out="carName">－</td></tr>
+          <tr><th>型式</th><td data-out="carModel">－</td></tr>
+          <tr><th>登録番号</th><td data-out="carPlate">－</td></tr>
+          <tr><th>車台番号</th><td data-out="carChassis">－</td></tr>
+        </table>
+        <table class="info-table col-half">
+          <tr><th colspan="2">契約車両（続き）</th></tr>
+          <tr><th>初度登録年月</th><td data-out="carFirstReg">－</td></tr>
+          <tr><th>走行距離</th><td data-out="carMileage">－</td></tr>
+          <tr><th>車体色</th><td data-out="carColor">－</td></tr>
+          <tr><th>車検有効期限</th><td data-out="carInspection">－</td></tr>
+        </table>
+      </div>
+
+      <div class="col-row">
+        <table class="info-table col-half">
+          <tr><th colspan="2">売買契約金額・支払い</th></tr>
+          <tr><th>売買契約金額</th><td class="price-cell" data-out="price">－</td></tr>
+          <tr><th>支払方法</th><td data-out="paymentMethod">－</td></tr>
+          <tr><th>支払期限</th><td data-out="paymentDeadline">－</td></tr>
+        </table>
+        <table class="info-table col-half">
+          <tr><th colspan="2">引渡し</th></tr>
+          <tr><th>車両引渡期限</th><td data-out="deliveryDeadline">－</td></tr>
+          <tr><th>書類引渡期限</th><td data-out="docDeadline">－</td></tr>
+          <tr><th>引渡場所</th><td data-out="deliveryPlace">－</td></tr>
+        </table>
+      </div>
+
+      <table class="info-table">
+        <tr><th colspan="2">残債務・未納金等</th></tr>
+        <tr><th>ローン残債</th><td data-out="loanStatus">無</td></tr>
+        <tr><th>残債金額</th><td data-out="loanAmount">－</td></tr>
+        <tr><th>信販会社名</th><td data-out="loanCompany">－</td></tr>
+        <tr><th>未納金等（自動車税・放置違反金等）</th><td data-out="unpaidStatus">無</td></tr>
+        <tr><th>未納金等の金額</th><td data-out="unpaidAmount">－</td></tr>
+      </table>
+
+      <table class="info-table">
+        <tr><th colspan="2">特記事項</th></tr>
+        <tr><td colspan="2" class="remarks-cell" data-out="remarks">－</td></tr>
+      </table>
+
+      <p class="notice">
+        ※ 本契約の内容及び裏面約款について、売主・買主双方が確認・同意のうえ、本書2通を作成し、各自1通を保管する。
+      </p>
+
+      <div class="signature-area">
+        <div class="signature-box">
+          <div class="signature-label">売主</div>
+          <div class="signature-line">住所：<span data-out="sellerAddress">　</span></div>
+          <div class="signature-line">氏名：<span data-out="sellerName">　</span>　　　　　　　　　印</div>
+          <div class="signature-line">署名日：　　　　年　　　月　　　日</div>
+        </div>
+        <div class="signature-box">
+          <div class="signature-label">買主</div>
+          <div class="signature-line">住所：〒437-1415　静岡県掛川市菊浜59-1</div>
+          <div class="signature-line">有限会社　松下モータース</div>
+          <div class="signature-line">代表取締役　松下　佳正　　　　　印</div>
+          <div class="signature-line">署名日：　　　　年　　　月　　　日</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------- 裏面（約款） ---------- -->
+    <section class="sheet" id="sheet-back">
+      <h2 class="terms-title">自動車買取契約書約款</h2>
+
+      <div class="terms-body">
+
+        <p class="term-article"><b>第１条（契約の目的）</b>
+本契約は、本契約書表面記載の売主（以下「売主」という。）が、表面記載の買主（以下「買主」という。）に対して、表面記載の車両（以下「契約車両」という。）を表面記載の売買契約金額で売り渡す際の売主及び買主間の権利義務を定めることを目的とする。</p>
+
+        <p class="term-article"><b>第２条（契約の成立時期）</b>
+本契約は、売主が契約車両を買主に売り渡すことに同意し、売主及び買主が本契約書表面の署名欄に署名又は記名押印することにより成立する。また、本契約書を2通作成し、各1通を保管する。</p>
+
+        <p class="term-article"><b>第３条（契約車両の引渡し）</b>
+売主は、買主又は買主の指定する第三者に対して、売主及び買主が合意した車両引渡期限までに売主及び買主が合意した場所（但し、買主の営業所又は売主の住所若しくは居所に限る。）にて契約車両を引き渡し、買主は、これを引き受け、車両受領証を売主に対し発行する。但し、買主は、移転登録書類等（次条第1項において定義される。）の引渡し及び契約車両に関して債務（ローン残債、自動車税（種別割）未納金、放置違反金等）があるときの当該債務の完済がなされる時まで、契約車両の引渡しを受けないことができる。
+２．契約車両の運搬費用等は引渡しの時をもって区分し、契約車両の引渡しまでに要する費用は、売主の負担とし、引渡し後に要する費用は買主の負担とする。</p>
+
+        <p class="term-article"><b>第４条（移転登録書類等の引渡し等）</b>
+売主は、次の各号に掲げる契約車両の名義変更等に必要な書類のうち、買主が指定する書類（以下「移転登録書類等」という。）を自己の費用と責任において完備し、本契約書表面記載の「書類引渡期限」までに買主に引き渡すものとする。
+（１）契約車両所有者の印鑑証明書、住民票（所有者が法人のときには当該法人の商業・法人登記簿謄本）、戸籍の附票、委任状、譲渡証明書、有効期間内の自動車税（種別割）納税証明書、その他契約車両の名義変更手続に必要な書類
+（２）自動車検査証
+（３）自動車損害賠償責任保険の証書
+（４）契約車両について使用済自動車の再資源化等に関する法律に基づき同法所定の料金が預託されているときにはリサイクル券
+（５）自動車税（種別割）の還付に関する委任状、譲渡通知書、譲渡確認書
+（６）自動車損害賠償責任保険料等の還付等に関する委任状
+（７）前各号の他、買主が売主に対し、作成又は交付を依頼した契約車両の所有権移転手続き等に必要な書類
+２．移転登録書類等のうち、印鑑証明書、住民票、商業・法人登記簿謄本、戸籍の附票等、買主が特定した有効期限がある書類については、売主から買主への第3条に基づく契約車両の引渡し及び本条に基づく移転登録書類等の引渡しがいずれも全て完了したときから2ヶ月以上の有効期限があるものとする。
+３．契約車両の名義変更については、買主が一切の責任を負うものとし、売主は、買主又は買主の指定する行政書士等の代理人に対し、契約車両の移転登録手続等に要する書類の作成・交付の代理権又は代行権限を予め付与する。
+４．前項の規定にかかわらず、第1項に定める移転登録書類等の引渡しの後、移転登録書類等が失効、紛失、毀損等したときには、売主は買主からの移転登録書類等の再引渡し請求に協力し、買主は、売主が当該協力のために現実に支出した合理的な範囲の費用を負担する。</p>
+
+        <p class="term-article"><b>第５条（支払い条件等）</b>
+買主は、本契約書表面記載のとおり売主から買主への第3条に基づく契約車両の引渡し及び第4条に基づく移転登録書類等の引渡しがいずれも完了した後、売主及び買主が合意した期限内に売買契約金額より、次の各号に定める支払いまでに買主に判明した売主が負担すべき債務（以下「未納金等」という。）を差し引いた金額（以下「支払代金」という。）を売主に対して本契約書表面記載の方法により支払うものとする。但し、支払い後に新たに未納金等が判明した場合における、買主の売主に対する損害賠償その他の請求（第8条第3項、第8条第5項に基づく請求を含む。）を妨げるものではない。
+（１）契約車両にかかるローン残債総額
+（２）その他前号に定めるものの他、支払いまでに買主に判明した売主が負担すべき契約車両にかかる債務
+２．買主は、売主の本契約違反により生じた費用、損害額以外について前項の支払代金債務と相殺してはならない。
+３．売主は、買主が第1項の支払期限までに支払代金を支払わない場合、本契約を解除することができる。この場合、買主は契約車両について契約車両の引渡し時の原状に復する義務を負う。</p>
+
+        <p class="term-article"><b>第６条（契約車両の種類又は品質等に関する申告義務）</b>
+売主は契約車両につき、本契約締結時の自己に判明している範囲でその使用状況その他の契約車両の種類又は品質に関して本契約の内容に適合しないもの（以下「不適合」という。）がある場合にはその程度等を誠実に買主に対し申告しなければならないものとする。
+２．売主及び買主は、本契約書の所要事項を正確かつ確実に記載、申告を行なうものとし、記載漏れ、誤記載、虚偽の記載等のないように留意するものとし、記載漏れ等を発見したときは、直ちに相手方に報告し、訂正しなければならない。</p>
+
+        <p class="term-article"><b>第７条（担保権等の処理）</b>
+契約車両に関して債務があるときには、売主は、直ちに当該債務を完済しなければならないものとする。
+２．契約車両につき、譲渡担保権等の担保権の設定又は差押え等（以下「担保権等」という。）の事実が判明したときには、売主は、買主が当該事実を知った日から10日以内に担保権等を消滅させる処理を行なうものとする。
+３．前項の処理に要する費用は、売主の負担とする。</p>
+
+        <p class="term-article"><b>第８条（契約の解除）</b>
+次の各号のいずれかに該当する事由が生じた場合には、買主は売主に協議を求めるものとし、両者で十分な協議を行ってもなお合意に至らなかった場合又は協議が不能なときは、買主は売主に催告し（第5号及び第6号の場合、催告は不要）本契約を解除することができる。
+（１）売主が、第3条の定めに従い車両引渡期限までに契約車両を引き渡さないとき
+（２）売主が、第4条の定めに従い書類引渡期限までに移転登録書類等を引き渡さないとき
+（３）売主が、買主に対し、金銭債務を負担している場合（買主が売主に代わり契約車両にかかる未納金等を支払った場合等）で当該債務の弁済をしないとき
+（４）前条第2項の担保権等を消滅させる処理がなされないとき
+（５）契約車両につき、中古自動車取引業界における一般的かつ標準的な車両検査（修復歴の基準については一般財団法人日本自動車査定協会が定める基準、走行距離に関する不適合においては一般社団法人日本オートオークション協議会への照会を実施）において判明しない不適合があることが判明したとき
+（６）本契約締結日から第3条の契約車両の引渡しまでの間に契約車両に買主の責めに帰さない破損等の変化が生じたとき
+２．買主は、前項を除き、契約車両に修復歴があることを原因として、本契約を解除することはできない。
+３．第１項各号のいずれかに該当する事由が生じた場合に買主に損害が生じたときには、買主は、第1項の解除と同時又は解除をすることなく、かかる損害（実際に発生した損害に限る。逸失利益は含まれない。）の賠償を請求することができるものとする。但し、第1項の解除をすることなく損害の賠償を請求する場合、買主は契約車両をオートオークションで売却し、契約車両の資産価値を確定したうえで、損害額を算定し損害の賠償を請求しなければならない。
+４．第1項の解除権及び第3項の損害賠償請求権の行使期間は買主が、第1項各号に掲げる事由に該当することを知った時から3ヵ月間とする。
+５．売主が次の各号のいずれかに該当した場合には、買主は何時でも売主に対し事前に通知又は催告を行なうことなく、直ちに本契約を解除することができ、買主に損害が生じたときは、解除と同時又は解除をすることなく、買主は売主に対し、かかる損害（逸失利益を含む。）の賠償を請求することができるものとする。
+（１）監督官庁から事業の取消、停止等の処分を受けたとき
+（２）解散又は事業の全部若しくは重要な一部を第三者に譲渡しようとしたとき
+（３）事業の廃止又は休止をしたとき
+（４）資本減少、合併又は会社分割の決議をしたとき
+（５）自己の財産につき、第三者より仮差押、仮処分、強制執行等の債権保全行為を受け契約の履行が困難と認められるとき
+（６）破産、特別清算、民事再生、会社更生手続、その他これらに類する諸手続等の申し立てを受け又は自ら申し立てたとき
+（７）支払停止若しくは支払不能に陥ったとき又は金融機関から取引停止処分を受けたとき
+（８）振り出した手形又は小切手が、不渡りとなったとき
+（９）買主への著しい背信行為や社会的信用を損なう行為を実行し又は計画したとき
+（10）反社会的勢力（暴力団、暴力団員、その他これらに準ずるものをいう。）に該当することが判明したとき
+６．売主は本契約締結日から第3条に定める契約車両の引渡しを行った日の翌日までは、買主に通知することにより何等の負担なく本契約を解除することができるものとする。
+７．解除事由のいかんを問わず、売主又は買主により本契約が解除された場合、買主は売主に対し、解除日から7日以内に、買主が既に第5条の支払代金を支払っているときは支払代金の返還及び損害賠償（但し、第6項の解除の場合、損害賠償は発生しない。以下本条において同じ。）の支払いを求めることができるものとする。
+８．本契約の解除時において買主が契約車両を受領している場合、買主は、売主からの支払代金の返還及び損害賠償の支払いが完了するまで契約車両を留置できるものとする。なお、売主からの支払代金の返還及び損害賠償の支払いがなされたときは、買主は売主に対し、当該返還日から7日以内に、買主の指定する日時に売主が契約車両を引き渡した場所において契約車両を引き取ることを請求することができるものとする。
+９．解除事由のいかんを問わず、売主又は買主により本契約が解除されたにもかかわらず前項の期限内に売主が支払代金の返還及び損害賠償の支払いをしないとき、又は、売主が正当事由なく契約車両を引き取らないときは、買主は、契約車両を任意に処分し、契約車両を任意に処分した代金を支払代金及び損害に充当することができ、残余がある場合は、売主に交付する。</p>
+
+        <p class="term-article"><b>第９条（契約車両内残置物の処置等）</b>
+売主は、第3条の契約車両引渡しの際、原則として、契約車両に残置物なく、引渡すものとする。万一、引渡後の契約車両に残置物がある場合、買主は、売主が残置物について、所有権及び占有権を放棄したものとみなし、残置物を任意に処分することができる。
+２．売主は、カーナビゲーション等の情報記録機能を有する機器（以下「情報機器」という。）を装備した状態のまま契約車両を買主に対して引き渡す場合、売主の責任において情報機器の初期化等を行なうものとする。
+３．売主が、車両内に残置物を残置したこと及び情報機器の情報消去を怠ったことにより当該残置物及び当該情報機器に記録された情報が第三者に提供され、売主に損害が発生した場合であっても、買主は責任を負わない。
+４．前各項の定めは本契約が無効、取消し、又は解除された場合であっても有効とする。</p>
+
+        <p class="term-article"><b>第１０条（管轄裁判所）</b>
+本契約に関し売主及び買主間で紛争が生じた場合、訴訟の必要があるときは訴額に応じ、売主の住所地の地方裁判所又は簡易裁判所を第一審の専属的合意管轄裁判所とし、調停の必要があるときは、売主の住所地の簡易裁判所を専属的合意管轄裁判所とする。</p>
+
+        <p class="term-article"><b>第１１条（規定外事項）</b>
+本契約に定めのない事項又は本契約の解釈に疑義が生じたときは、関係法令を斟酌して、その都度、売主及び買主は誠意をもって協議し、解決するものとする。</p>
+
+      </div>
+
+      <p class="terms-source">
+        ※本約款は、一般社団法人日本自動車購入協会（JPUC）が公表する「自動車買取契約書約款」モデル約款（平成27年1月制定・令和2年2月14日改定）を参考に作成しています。実際の契約書としてご利用の際は、貴社の実情に合わせて内容をご確認・調整のうえ、必要に応じて専門家（弁護士等）にご確認ください。
+      </p>
+    </section>
+
+  </main>
+</div>
+
+<!-- ============ QRコード読取モーダル（印刷されない） ============ -->
+<div id="qr-modal" class="qr-modal no-print" hidden>
+  <div class="qr-modal-inner">
+    <div class="qr-modal-header">
+      <h3>車検証QRコード読取</h3>
+      <button type="button" id="qr-close" class="btn">閉じる</button>
+    </div>
+    <div class="qr-video-wrap">
+      <video id="qr-video" playsinline muted></video>
+    </div>
+    <div class="qr-status">
+      <div id="qr-status-2" class="qr-status-item">二次元コード２（登録番号・車台番号）：未読み取り</div>
+      <div id="qr-status-3" class="qr-status-item">二次元コード３（型式・初度登録・車検有効期限）：未読み取り</div>
+    </div>
+    <p id="qr-error" class="qr-error" hidden></p>
+    <p class="qr-hint">車検証に印字された２つのQRコードのいずれかにカメラを向けてください。両方読み取ると自動で入力欄に反映されます。</p>
+
+    <button type="button" id="qr-link-toggle" class="btn qr-link-toggle">📱 このPC/タブレットにカメラが無い場合：スマホで読み取る</button>
+    <div id="qr-link-section" class="qr-link-section" hidden>
+      <p class="qr-hint">
+        スマホのカメラでこのQRコードを読み取り、表示されたページで車検証をスキャンしてください。スキャン結果が新しいQRコードとして表示されたら、上のカメラでその画面を読み取ってください。
+      </p>
+      <div id="qr-link-canvas" class="qr-link-canvas"></div>
+      <p id="qr-link-url" class="qr-link-url"></p>
+      <p id="qr-link-warning" class="qr-error" hidden>
+        ※スマホのブラウザでカメラを使うには、このページがHTTPS（またはlocalhost）で配信されている必要があります。現在のURLはHTTPのため、スマホ側でカメラが起動できない可能性があります。HTTPSホスティング（Netlify・Vercel等）への公開をご検討ください。
+      </p>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js" defer></script>
+<script src="qr-parse.js" defer></script>
+<script src="script.js" defer></script>
+<script src="qr-scan.js" defer></script>
+</body>
+</html>

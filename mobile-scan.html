@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>車検証QRコード読取（スマホ用）</title>
+<link rel="stylesheet" href="mobile-scan.css">
+</head>
+<body>
+
+<header class="m-header">
+  <h1>車検証QRコード読取</h1>
+  <p>車検証の二次元コード２・３にカメラを向けてください</p>
+</header>
+
+<main class="m-main">
+
+  <!-- ---------- スキャン画面 ---------- -->
+  <section id="scan-view">
+    <div class="m-video-wrap">
+      <video id="qr-video" playsinline muted></video>
+    </div>
+
+    <div class="qr-status">
+      <div id="qr-status-2" class="qr-status-item">二次元コード２（登録番号・車台番号）：未読み取り</div>
+      <div id="qr-status-3" class="qr-status-item">二次元コード３（型式・初度登録・車検有効期限）：未読み取り</div>
+    </div>
+
+    <p id="qr-error" class="qr-error" hidden></p>
+
+    <button type="button" id="btn-show-result" class="m-btn m-btn-primary" disabled>
+      読み取り結果をQRコードで表示する
+    </button>
+    <p class="m-hint">片方だけ読み取れた状態でも表示できます。もう一方は契約書側で手入力してください。</p>
+  </section>
+
+  <!-- ---------- 結果QR表示画面 ---------- -->
+  <section id="result-view" hidden>
+    <p class="m-hint m-hint-strong">契約書を開いているPC/タブレットの「QRコード読取」→カメラで、このQRコードを読み取らせてください。</p>
+    <div class="m-result-qr-wrap">
+      <div id="result-qr-canvas"></div>
+    </div>
+    <ul id="result-summary" class="m-result-summary"></ul>
+    <button type="button" id="btn-rescan" class="m-btn">もう一度スキャンする</button>
+  </section>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js" defer></script>
+<script src="qr-parse.js" defer></script>
+<script src="mobile-scan.js" defer></script>
+</body>
+</html>
