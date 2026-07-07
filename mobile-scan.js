@@ -100,7 +100,11 @@
 
     try {
       stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: { ideal: "environment" } },
+        video: {
+          facingMode: { ideal: "environment" },
+          width: { ideal: 1920 },
+          height: { ideal: 1080 },
+        },
       });
     } catch (e) {
       showError("カメラを起動できませんでした。ブラウザのカメラ利用許可をご確認ください。");
