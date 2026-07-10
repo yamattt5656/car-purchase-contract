@@ -49,6 +49,12 @@
     renderField("unpaidAmount", unpaidStatus === "有" ? data.unpaidAmount : "");
   }
 
+  function applyBankVisibility(data) {
+    const bankTable = document.getElementById("bank-table");
+    if (!bankTable) return;
+    bankTable.hidden = data.paymentMethod !== "銀行振込";
+  }
+
   function collectData() {
     const { inputs, radios } = getFormElements();
     const data = {};
@@ -64,6 +70,7 @@
       renderField(name, data[name]);
     });
     applyLoanUnpaidVisibility(data);
+    applyBankVisibility(data);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
   }
 

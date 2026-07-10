@@ -96,6 +96,30 @@
     </fieldset>
 
     <fieldset>
+      <legend>お客様の振込先口座</legend>
+      <p class="qr-fill-note">支払方法が「銀行振込」のときに契約書へ表示されます。</p>
+      <label>金融機関名
+        <input type="text" data-bind="bankName" placeholder="〇〇銀行">
+      </label>
+      <label>支店名
+        <input type="text" data-bind="bankBranch" placeholder="〇〇支店">
+      </label>
+      <label>預金種目
+        <select data-bind="bankAccountType">
+          <option value="">選択してください</option>
+          <option value="普通">普通</option>
+          <option value="当座">当座</option>
+        </select>
+      </label>
+      <label>口座番号
+        <input type="text" data-bind="bankAccountNumber" placeholder="1234567">
+      </label>
+      <label>口座名義（フリガナ）
+        <input type="text" data-bind="bankAccountHolder" placeholder="ヤマダ タロウ">
+      </label>
+    </fieldset>
+
+    <fieldset>
       <legend>引渡し</legend>
       <label>車両引渡期限
         <input type="date" data-bind="deliveryDeadline">
@@ -205,6 +229,14 @@
           <tr><th>引渡場所</th><td data-out="deliveryPlace">－</td></tr>
         </table>
       </div>
+
+      <table class="info-table" id="bank-table" hidden>
+        <tr><th colspan="2">お客様の振込先口座</th></tr>
+        <tr><th>金融機関名</th><td data-out="bankName">－</td></tr>
+        <tr><th>支店名</th><td data-out="bankBranch">－</td></tr>
+        <tr><th>預金種目・口座番号</th><td><span data-out="bankAccountType">－</span>　<span data-out="bankAccountNumber">－</span></td></tr>
+        <tr><th>口座名義（フリガナ）</th><td data-out="bankAccountHolder">－</td></tr>
+      </table>
 
       <table class="info-table">
         <tr><th colspan="2">残債務・未納金等</th></tr>
