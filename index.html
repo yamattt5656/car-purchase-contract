@@ -23,9 +23,13 @@
 
     <fieldset>
       <legend>契約基本情報</legend>
-      <label>契約日
-        <input type="date" data-bind="contractDate">
-      </label>
+      <span class="date-field-label">契約日</span>
+      <div class="date-select-group" data-target="contractDate">
+        <select class="ds-year"></select>
+        <select class="ds-month"></select>
+        <select class="ds-day"></select>
+      </div>
+      <input type="hidden" data-bind="contractDate">
       <label>契約書番号（任意）
         <input type="text" data-bind="contractNo" placeholder="例）2026-0001">
       </label>
@@ -45,8 +49,23 @@
       <label>電話番号
         <input type="text" data-bind="sellerPhone" placeholder="090-0000-0000">
       </label>
-      <label>生年月日（法人の場合は法人番号）
-        <input type="text" data-bind="sellerBirth" placeholder="1990年1月1日 生">
+      <label class="label-inline">売主区分
+        <span class="radio-group">
+          <label><input type="radio" name="sellerType" value="個人" checked> 個人</label>
+          <label><input type="radio" name="sellerType" value="法人"> 法人</label>
+        </span>
+      </label>
+      <div id="sellerBirth-date-field">
+        <span class="date-field-label">生年月日</span>
+        <div class="date-select-group" data-target="sellerBirth">
+          <select class="ds-year"></select>
+          <select class="ds-month"></select>
+          <select class="ds-day"></select>
+        </div>
+      </div>
+      <input type="hidden" data-bind="sellerBirth">
+      <label id="sellerCorpNo-field" hidden>法人番号
+        <input type="text" data-bind="sellerCorpNo" placeholder="1234567890123">
       </label>
     </fieldset>
 
@@ -75,9 +94,13 @@
       <label>車体色
         <input type="text" data-bind="carColor" placeholder="パールホワイト">
       </label>
-      <label>車検有効期限
-        <input type="date" data-bind="carInspection">
-      </label>
+      <span class="date-field-label">車検有効期限</span>
+      <div class="date-select-group" data-target="carInspection">
+        <select class="ds-year"></select>
+        <select class="ds-month"></select>
+        <select class="ds-day"></select>
+      </div>
+      <input type="hidden" data-bind="carInspection">
     </fieldset>
 
     <fieldset>
@@ -93,9 +116,13 @@
           <option value="その他">その他</option>
         </select>
       </label>
-      <label>支払期限
-        <input type="date" data-bind="paymentDeadline">
-      </label>
+      <span class="date-field-label">支払期限</span>
+      <div class="date-select-group" data-target="paymentDeadline">
+        <select class="ds-year"></select>
+        <select class="ds-month"></select>
+        <select class="ds-day"></select>
+      </div>
+      <input type="hidden" data-bind="paymentDeadline">
     </fieldset>
 
     <fieldset>
@@ -124,12 +151,20 @@
 
     <fieldset>
       <legend>引渡し</legend>
-      <label>車両引渡期限
-        <input type="date" data-bind="deliveryDeadline">
-      </label>
-      <label>書類引渡期限
-        <input type="date" data-bind="docDeadline">
-      </label>
+      <span class="date-field-label">車両引渡期限</span>
+      <div class="date-select-group" data-target="deliveryDeadline">
+        <select class="ds-year"></select>
+        <select class="ds-month"></select>
+        <select class="ds-day"></select>
+      </div>
+      <input type="hidden" data-bind="deliveryDeadline">
+      <span class="date-field-label">書類引渡期限</span>
+      <div class="date-select-group" data-target="docDeadline">
+        <select class="ds-year"></select>
+        <select class="ds-month"></select>
+        <select class="ds-day"></select>
+      </div>
+      <input type="hidden" data-bind="docDeadline">
       <label>引渡場所
         <input type="text" data-bind="deliveryPlace" placeholder="買主営業所 または 売主住所">
       </label>
@@ -387,6 +422,7 @@
 <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js" defer></script>
 <script src="qr-parse.js" defer></script>
+<script src="date-picker.js" defer></script>
 <script src="script.js" defer></script>
 <script src="qr-scan.js" defer></script>
 </body>

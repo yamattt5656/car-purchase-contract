@@ -7,6 +7,7 @@
     if (!el) return;
     el.value = value;
     el.dispatchEvent(new Event("input", { bubbles: true }));
+    if (window.syncDateSelector) window.syncDateSelector(name);
   }
 
   function applyQr2(data) {

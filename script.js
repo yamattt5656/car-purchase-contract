@@ -12,7 +12,10 @@
     if (!value) return "";
     const [y, m, d] = value.split("-");
     if (!y || !m || !d) return value;
-    return `${y}年${Number(m)}月${Number(d)}日`;
+    const yy = Number(y);
+    const era = typeof window.eraLabel === "function" ? window.eraLabel(yy) : "";
+    const eraSuffix = era ? `（${era}）` : "";
+    return `${yy}年${Number(m)}月${Number(d)}日${eraSuffix}`;
   }
 
   function formatCurrency(value) {
@@ -55,6 +58,14 @@
     bankTable.hidden = data.paymentMethod !== "銀行振込";
   }
 
+  function applySellerTypeVisibility(data) {
+    const isCorp = data.sellerType === "法人";
+    const dateField = document.getElementById("sellerBirth-date-field");
+    const corpField = document.getElementById("sellerCorpNo-field");
+    if (dateField) dateField.hidden = isCorp;
+    if (corpField) corpField.hidden = !isCorp;
+  }
+
   function collectData() {
     const { inputs, radios } = getFormElements();
     const data = {};
@@ -71,6 +82,7 @@
     });
     applyLoanUnpaidVisibility(data);
     applyBankVisibility(data);
+    applySellerTypeVisibility(data);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
   }
 
@@ -104,6 +116,8 @@
       localStorage.removeItem(STORAGE_KEY);
       inputs.forEach((el) => { el.value = ""; });
       document.querySelectorAll('.editor input[type=radio][value="無"]').forEach(el => el.checked = true);
+      document.querySelectorAll('.editor input[name="sellerType"][value="個人"]').forEach(el => el.checked = true);
+      if (window.resetDateSelectors) window.resetDateSelectors();
       renderAll();
     });
   }
