@@ -67,6 +67,9 @@
       <label id="sellerCorpNo-field" hidden>法人番号
         <input type="text" data-bind="sellerCorpNo" placeholder="1234567890123">
       </label>
+      <label>免許証番号
+        <input type="text" data-bind="sellerLicenseNo" placeholder="第 123456789012 号">
+      </label>
     </fieldset>
 
     <fieldset>
@@ -85,6 +88,11 @@
       <label>車台番号
         <input type="text" data-bind="carChassis" placeholder="ZVW30-1234567">
       </label>
+      <label>リサイクル券預託金額（円）
+        <input type="number" data-bind="recycleFee" placeholder="10000">
+      </label>
+      <button type="button" id="btn-recycle-fetch" class="btn btn-recycle">🔍 金額を取得</button>
+      <p class="qr-fill-note" id="recycle-note">車台番号・登録番号を入力後、自動車リサイクルシステムでリサイクル券の預託状況を確認します。</p>
       <label>初度登録年月
         <input type="text" data-bind="carFirstReg" placeholder="令和3年5月">
       </label>
@@ -234,6 +242,7 @@
       <div class="price-highlight">
         <div class="price-highlight-label">売買契約金額</div>
         <div class="price-highlight-value" data-out="price">－</div>
+        <div class="price-highlight-note" id="recycle-include-note" hidden>（リサイクル券 <span data-out="recycleFee">－</span> を含む）</div>
       </div>
 
       <div class="col-row">
@@ -281,6 +290,7 @@
           <div class="signature-label">売主</div>
           <div class="signature-line">住所：<span data-out="sellerAddress">　</span></div>
           <div class="signature-line">氏名：<span data-out="sellerName">　</span>　　　　　　　　　印</div>
+          <div class="signature-line">免許証番号：<span data-out="sellerLicenseNo">　</span></div>
           <div class="signature-line">署名日：　　　　年　　　月　　　日</div>
         </div>
         <div class="signature-box">
@@ -423,6 +433,7 @@
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js" defer></script>
 <script src="qr-parse.js" defer></script>
 <script src="date-picker.js" defer></script>
+<script src="recycle-fetch.js" defer></script>
 <script src="script.js" defer></script>
 <script src="qr-scan.js" defer></script>
 </body>

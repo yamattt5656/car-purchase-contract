@@ -6,7 +6,7 @@
     "deliveryDeadline", "docDeadline"
   ]);
 
-  const currencyFields = new Set(["price", "loanAmount", "unpaidAmount"]);
+  const currencyFields = new Set(["price", "loanAmount", "unpaidAmount", "recycleFee"]);
 
   function formatDate(value) {
     if (!value) return "";
@@ -58,6 +58,13 @@
     bankTable.hidden = data.paymentMethod !== "銀行振込";
   }
 
+  function applyRecycleNoteVisibility(data) {
+    const note = document.getElementById("recycle-include-note");
+    if (!note) return;
+    const fee = data.recycleFee;
+    note.hidden = !(fee && Number(fee) > 0);
+  }
+
   function applySellerTypeVisibility(data) {
     const isCorp = data.sellerType === "法人";
     const dateField = document.getElementById("sellerBirth-date-field");
@@ -83,6 +90,7 @@
     applyLoanUnpaidVisibility(data);
     applyBankVisibility(data);
     applySellerTypeVisibility(data);
+    applyRecycleNoteVisibility(data);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
   }
 
