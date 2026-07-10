@@ -29,6 +29,9 @@
       <label>契約書番号（任意）
         <input type="text" data-bind="contractNo" placeholder="例）2026-0001">
       </label>
+      <label>担当者名
+        <input type="text" data-bind="staffName" placeholder="鈴木 一郎">
+      </label>
     </fieldset>
 
     <fieldset>
@@ -251,6 +254,7 @@
           <div class="signature-line">有限会社　松下モータース</div>
           <div class="signature-line">代表取締役　松下　佳正　　　　　印</div>
           <div class="signature-line">署名日：　　　　年　　　月　　　日</div>
+          <div class="signature-line">担当者：<span data-out="staffName">　</span></div>
         </div>
       </div>
     </section>
