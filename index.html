@@ -30,9 +30,11 @@
         <select class="ds-day"></select>
       </div>
       <input type="hidden" data-bind="contractDate">
-      <label>契約書番号（任意）
-        <input type="text" data-bind="contractNo" placeholder="例）2026-0001">
-      </label>
+      <span class="date-field-label">契約書番号（自動採番）</span>
+      <div class="zip-lookup">
+        <input type="text" class="zip-input" data-bind="contractNo" placeholder="202607110001">
+        <button type="button" class="btn zip-btn" id="btn-contract-renumber">採番</button>
+      </div>
       <label>担当者名
         <input type="text" data-bind="staffName" placeholder="鈴木 一郎">
       </label>
@@ -43,6 +45,13 @@
       <label>氏名・名称
         <input type="text" data-bind="sellerName" placeholder="山田 太郎">
       </label>
+      <span class="date-field-label">郵便番号</span>
+      <div class="zip-lookup" data-zip-target="sellerAddress">
+        <input type="text" class="zip-input" data-bind="sellerZip" placeholder="4371415（ハイフン無し可）" inputmode="numeric" maxlength="8">
+        <button type="button" class="btn zip-btn">住所検索</button>
+      </div>
+      <select class="zip-candidates" data-zip-for="sellerAddress" hidden></select>
+      <p class="zip-message" data-zip-msg="sellerAddress" hidden></p>
       <label>住所
         <input type="text" data-bind="sellerAddress" placeholder="東京都〇〇区〇〇1-2-3">
       </label>
@@ -433,8 +442,10 @@
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js" defer></script>
 <script src="qr-parse.js" defer></script>
 <script src="date-picker.js" defer></script>
+<script src="zip-lookup.js" defer></script>
 <script src="recycle-fetch.js" defer></script>
 <script src="script.js" defer></script>
+<script src="contract-number.js" defer></script>
 <script src="qr-scan.js" defer></script>
 </body>
 </html>

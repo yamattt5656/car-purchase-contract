@@ -126,6 +126,7 @@
       document.querySelectorAll('.editor input[type=radio][value="無"]').forEach(el => el.checked = true);
       document.querySelectorAll('.editor input[name="sellerType"][value="個人"]').forEach(el => el.checked = true);
       if (window.resetDateSelectors) window.resetDateSelectors();
+      if (window.issueContractNumber) window.issueContractNumber();
       renderAll();
     });
   }
