@@ -10,6 +10,9 @@
 
 * { box-sizing: border-box; }
 
+/* hidden 属性を確実に効かせる（.editor label 等の display 指定に上書きされないように） */
+[hidden] { display: none !important; }
+
 body {
   margin: 0;
   font-family: "Hiragino Kaku Gothic ProN", "Yu Gothic", "Meiryo", sans-serif;
