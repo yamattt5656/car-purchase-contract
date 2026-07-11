@@ -85,10 +85,19 @@
   async function scanTick(video) {
     if (!stream) return;
     try {
+      let found = false;
       if (detector) {
         const codes = await detector.detect(video);
-        codes.forEach((c) => c.rawValue && handleDecoded(c.rawValue));
-      } else if (window.jsQR && video.videoWidth) {
+        codes.forEach((c) => {
+          if (c.rawValue) {
+            found = true;
+            handleDecoded(c.rawValue);
+          }
+        });
+      }
+      // ネイティブ検出で見つからない場合は、前処理付きjsQRで再挑戦する
+      // （車検証の密なQR・地紋はネイティブ検出だと読めないことが多い）
+      if (!found && window.jsQR && video.videoWidth) {
         if (!canvas) {
           canvas = document.createElement("canvas");
           ctx = canvas.getContext("2d", { willReadFrequently: true });
@@ -97,8 +106,10 @@
         canvas.height = video.videoHeight;
         ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
         const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        const result = window.jsQR(imageData.data, imageData.width, imageData.height);
-        if (result && result.data) handleDecoded(result.data);
+        const data = window.QrPreprocess
+          ? window.QrPreprocess.decode(imageData)
+          : (window.jsQR(imageData.data, imageData.width, imageData.height) || {}).data;
+        if (data) handleDecoded(data);
       }
     } catch (e) {
       /* デコード失敗は無視して次のフレームへ */
