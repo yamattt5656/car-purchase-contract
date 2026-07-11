@@ -188,18 +188,34 @@
     </fieldset>
 
     <fieldset>
+      <legend>所有者・使用者</legend>
+      <span class="date-field-label">所有者</span>
+      <div class="radio-group">
+        <label><input type="radio" name="ownerType" value="本人" checked> 本人</label>
+        <label><input type="radio" name="ownerType" value="信販会社"> 信販会社</label>
+        <label><input type="radio" name="ownerType" value="その他"> その他</label>
+      </div>
+      <label id="ownerOther-field" hidden>その他（所有者名）
+        <input type="text" data-bind="ownerOther" placeholder="所有者の氏名・名称">
+      </label>
+      <span class="date-field-label">使用者</span>
+      <div class="radio-group">
+        <label><input type="radio" name="userType" value="本人" checked> 本人</label>
+        <label><input type="radio" name="userType" value="信販会社"> 信販会社</label>
+        <label><input type="radio" name="userType" value="その他"> その他</label>
+      </div>
+      <label id="userOther-field" hidden>その他（使用者名）
+        <input type="text" data-bind="userOther" placeholder="使用者の氏名・名称">
+      </label>
+    </fieldset>
+
+    <fieldset>
       <legend>残債務・未納金等</legend>
       <label class="label-inline">ローン残債
         <span class="radio-group">
           <label><input type="radio" name="loanStatus" value="無" checked> 無</label>
           <label><input type="radio" name="loanStatus" value="有"> 有</label>
         </span>
-      </label>
-      <label>残債金額（円・任意）
-        <input type="number" data-bind="loanAmount" placeholder="0">
-      </label>
-      <label>信販会社名（任意）
-        <input type="text" data-bind="loanCompany" placeholder="〇〇クレジット株式会社">
       </label>
       <label class="label-inline">未納金等（自動車税・放置違反金等）
         <span class="radio-group">
@@ -277,10 +293,10 @@
       </table>
 
       <table class="info-table">
-        <tr><th colspan="2">残債務・未納金等</th></tr>
+        <tr><th colspan="2">所有者・使用者 / 残債務・未納金等</th></tr>
+        <tr><th>所有者</th><td data-out="ownerDisplay">本人</td></tr>
+        <tr><th>使用者</th><td data-out="userDisplay">本人</td></tr>
         <tr><th>ローン残債</th><td data-out="loanStatus">無</td></tr>
-        <tr><th>残債金額</th><td data-out="loanAmount">－</td></tr>
-        <tr><th>信販会社名</th><td data-out="loanCompany">－</td></tr>
         <tr><th>未納金等（自動車税・放置違反金等）</th><td data-out="unpaidStatus">無</td></tr>
         <tr><th>未納金等の金額</th><td data-out="unpaidAmount">－</td></tr>
       </table>

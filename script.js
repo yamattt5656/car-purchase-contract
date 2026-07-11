@@ -47,9 +47,22 @@
     document.querySelectorAll('[data-out="loanStatus"]').forEach(el => el.textContent = loanStatus);
     document.querySelectorAll('[data-out="unpaidStatus"]').forEach(el => el.textContent = unpaidStatus);
 
-    renderField("loanAmount", loanStatus === "有" ? data.loanAmount : "");
-    renderField("loanCompany", loanStatus === "有" ? data.loanCompany : "");
     renderField("unpaidAmount", unpaidStatus === "有" ? data.unpaidAmount : "");
+  }
+
+  function applyOwnerUser(data) {
+    const ownerType = data.ownerType || "本人";
+    const userType = data.userType || "本人";
+
+    const ownerField = document.getElementById("ownerOther-field");
+    const userField = document.getElementById("userOther-field");
+    if (ownerField) ownerField.hidden = ownerType !== "その他";
+    if (userField) userField.hidden = userType !== "その他";
+
+    const ownerDisplay = ownerType === "その他" ? (data.ownerOther || "その他") : ownerType;
+    const userDisplay = userType === "その他" ? (data.userOther || "その他") : userType;
+    document.querySelectorAll('[data-out="ownerDisplay"]').forEach(el => el.textContent = ownerDisplay);
+    document.querySelectorAll('[data-out="userDisplay"]').forEach(el => el.textContent = userDisplay);
   }
 
   function applyBankVisibility(data) {
@@ -91,6 +104,7 @@
     applyBankVisibility(data);
     applySellerTypeVisibility(data);
     applyRecycleNoteVisibility(data);
+    applyOwnerUser(data);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
   }
 
@@ -125,6 +139,7 @@
       inputs.forEach((el) => { el.value = ""; });
       document.querySelectorAll('.editor input[type=radio][value="無"]').forEach(el => el.checked = true);
       document.querySelectorAll('.editor input[name="sellerType"][value="個人"]').forEach(el => el.checked = true);
+      document.querySelectorAll('.editor input[name="ownerType"][value="本人"], .editor input[name="userType"][value="本人"]').forEach(el => el.checked = true);
       if (window.resetDateSelectors) window.resetDateSelectors();
       if (window.issueContractNumber) window.issueContractNumber();
       renderAll();
